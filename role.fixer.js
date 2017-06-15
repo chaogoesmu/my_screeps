@@ -120,24 +120,34 @@ function findTarget(creep)
             	
             });
         
-        if(repairTarget.length>0){
+        if(repairTarget.length > 0){
             repairTarget = repairTarget[0].id;
             console.log('Repairing Defenses :' + repairTarget);
             creep.memory.repairTarget = repairTarget;
-        }else{
-            var repairTarget = creep.pos.findClosestByPath(FIND_STRUCTURES, {
+        }else{//find all the walls
+            var repairTarget = creep.room.find(FIND_STRUCTURES, {
                 filter: (s) => {
             		return ((s.structureType == STRUCTURE_WALL) && (s.hits < s.hitsMax));
             	}
             });
-            if(repairTarget.length>0){
-            repairTarget = repairTarget[0].id;
-            	creep.memory.repairTarget = repairTarget;
-            	console.log('Repairing Walls :' + repairTarget);
+            if(repairTarget.length > 0){//if you found walls that aren't fully repaired
+                var i=0;
+                creep.memory.repairTarget = repairTarget[0].id;
+                var target = Game.getObjectById(creep.memory.repairTarget);
+                while(i<repairTarget.length-1)
+                {
+                    if(repairTarget[i] != undefined && target.hits>repairTarget[i].hits)//compare the walls, find the lowest health one
+                    {
+                    	creep.memory.repairTarget = repairTarget[i].id;
+                    	target = repairTarget[i];
+                    }
+                    i++;
+                }
+                console.log('Repairing Walls :' + creep.memory.repairTarget);
             }
             else
             {
-                console.log('couldn\'t find a wall?');
+                console.log('no valid repair targets found, please check code');
             }
         }
         
