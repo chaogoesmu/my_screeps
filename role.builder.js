@@ -48,7 +48,7 @@ var roleBuilder = {
                 }
                 else
                 {
-                    roleFixer.run(creep);
+                    roleUpgrader.run(creep);
                 }
 			}
 			else

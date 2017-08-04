@@ -10,10 +10,10 @@ var roleLDMule = require('role.LDMule');
 
 module.exports.loop = function () {
 var MaxHarvest = 0;
-var MaxBuilder = 2;
-var MaxUpgrader = 5;
+var MaxBuilder = 1;
+var MaxUpgrader = 1;
 var MaxFixer =1;
-var MaxMule = 2;
+var MaxMule = 3;
 var MaxTick = 2;
 var MaxForager =0;
 var MaxLDMule = 0;
@@ -21,15 +21,15 @@ var MaxLDTick = 0;
 var MaxForager3 =0;
 var MaxForager7 =0;
 
-    /*
-    var tower = Game.getObjectById('5936cf0196f7ee7950017ccf');
+
+    var tower = Game.getObjectById('59845a1d1d893843684ddbe8');
     if(tower) {
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if(closestHostile) {
             tower.attack(closestHostile);
         }
     }
-    */
+
 	for(let name in Memory.creeps)
 	{
 		if(Game.creeps[name]==undefined)
@@ -102,36 +102,25 @@ var MaxForager7 =0;
 	    //console.log(MyCreeps.toString());
 		if(MyCreeps[0]<MaxHarvest)
 		{
-		    Memory.isbusy=true;
-			//spawn harvester
-			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, MOVE,MOVE], undefined,{role:'harvester'} );
-			console.log('Spawning: harvester '+ name);
+		    spawnGeneral('Spawn.Prime', 'harvester');
 		}
 		else
 		{
     		if(MyCreeps[1]<MaxUpgrader)
     		{
-    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY, MOVE, MOVE,WORK, CARRY, MOVE, MOVE
-    			], undefined,{role:'upgrader'} );
-    			console.log('Spawning: upgrader '+ name);
-    			Memory.isbusy=true;
+    			spawnGeneral('Spawn.Prime', 'upgrader');
     		}
     		else
     		{
         		if(MyCreeps[2]<MaxBuilder)
         		{
-        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY,CARRY, MOVE,MOVE], undefined,{role:'builder'} );
-        			console.log('Spawning: builder '+ name);
-        			Memory.isbusy=true;
+        			spawnGeneral('Spawn.Prime', 'builder');
         		}
         		else
         		{
     				if(MyCreeps[3]<MaxFixer)
             		{
-            		    Memory.isbusy=true;
-            			//spawn harvester
-            			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY, CARRY,MOVE,MOVE], undefined,{role:'fixer'} );
-            			console.log('Spawning: fixer '+ name);
+            		    spawnGeneral('Spawn.Prime', 'fixer');
             		}
             		else
             		{
@@ -139,7 +128,7 @@ var MaxForager7 =0;
                 		{
                 		    Memory.isbusy=true;
                 			//spawn harvester
-                			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, CARRY,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
+                			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
                 			console.log('Spawning: Mule '+ name);
                 		}
                 		else
@@ -208,6 +197,13 @@ var MaxForager7 =0;
     		}
     	}
 	}
+	else
+	{
+	    if(MyCreeps[4]<1 && MyCreeps[5]<1 && MyCreeps[0]<1)//just in case, if there are no ticks, harvesters or mules, spawn a harvester
+	    {
+	        Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY,MOVE,MOVE], undefined,{role:'harvester'} );
+	    }
+	}
 
 	if(Memory.report == true)
 	{
@@ -215,4 +211,22 @@ var MaxForager7 =0;
 	    Memory.report = false;
 	}
     
+}
+function spawnGeneral(spawnPoint, typeOfSpawn)
+{
+    var top = Game.spawns[spawnPoint].room.energyCapacityAvailable;
+    var loop = top/250;
+    var i=1;
+    var body = [];
+    while(i<loop)
+    {
+        body.push(WORK);
+        body.push(CARRY);
+        body.push(MOVE);
+        body.push(MOVE);
+        i++;
+    }
+    Memory.isbusy=true;
+	var name = Game.spawns[spawnPoint].createCreep( body, undefined,{role:typeOfSpawn} );
+	console.log('Spawning: '+typeOfSpawn+ ', ' + name);
 }

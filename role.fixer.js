@@ -52,18 +52,25 @@ var roleFixer = {
 			}
 			else
 			{
-				if(target.hits == target.hitsMax)
-				{
-				    //findTarget(creep);
-				    console.log('repaired ' + Game.getObjectById(creep.memory.repairTarget).name);
-				    creep.memory.repairTarget = undefined;
-				}
-				else
-				{
-    				if(creep.repair(target) == ERR_NOT_IN_RANGE) {
-    					creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+			    if(target != null){
+    				if(target.hits == target.hitsMax)
+    				{
+    				    //findTarget(creep);
+    				    console.log('repaired ' + Game.getObjectById(creep.memory.repairTarget).name);
+    				    creep.memory.repairTarget = undefined;
     				}
-				}
+    				else
+    				{
+        				if(creep.repair(target) == ERR_NOT_IN_RANGE) {
+        					creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+        				}
+    				}
+			    }
+			    else
+			    {
+			        target = undefined;
+			    }
+
 			}
 			//go fix something
 			break;
