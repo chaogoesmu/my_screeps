@@ -1,4 +1,4 @@
-var roleFixer = require('role.fixer');
+var roleUpgrader = require('role.upgrader');
 /*
  * Module code goes here. Use 'module.exports' to export things:
  * module.exports.thing = 'a thing';
@@ -62,7 +62,7 @@ var roleBuilder = {
 				if(target==undefined){
 				    creep.memory.MyTarget = undefined;
 					//creep.say('bored');
-					roleFixer.run(creep);
+					roleUpgrader.run(creep);
 				}
 			}
 			//go build something
@@ -99,7 +99,7 @@ function getEnergy(creep)
 function findTarget(creep)
 {
 	
-	var targets = creep.pos.findClosestByPath(FIND_CONSTRUCTION_SITES);
+	var targets = creep.pos.findClosestByRange(FIND_CONSTRUCTION_SITES);
     if(targets != undefined)
     {
 		creep.memory.MyTarget = targets.id;

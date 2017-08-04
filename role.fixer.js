@@ -1,4 +1,5 @@
-var roleUpgrader = require('role.upgrader');
+var roleBuilder = require('role.builder');
+var actHarvest = require('action.harvest');
 //var harv = require('mod.tools');
 /*
  * Module code goes here. Use 'module.exports' to export things:
@@ -44,25 +45,24 @@ var roleFixer = {
 			if(creep.memory.repairTarget == undefined)
 			{
                 findTarget(creep);
-				creep.say('🚧 FIXIT');
+				//creep.say('🚧 FIXIT');
+			}
+			if(creep.memory.repairTarget == undefined){
+			    roleBuilder.run(creep);
 			}
 			else
 			{
 				if(target.hits == target.hitsMax)
 				{
 				    //findTarget(creep);
-				    findTarget(creep);
-				    var target = Game.getObjectById(creep.memory.repairTarget);
+				    console.log('repaired ' + Game.getObjectById(creep.memory.repairTarget).name);
+				    creep.memory.repairTarget = undefined;
 				}
 				else
 				{
     				if(creep.repair(target) == ERR_NOT_IN_RANGE) {
     					creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
     				}
-				}
-				//if theres nothing to fix
-				if(target==undefined){
-					roleUpgrader.run(creep);
 				}
 			}
 			//go fix something
@@ -90,11 +90,7 @@ var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
     }
     else
     {
-		var source = creep.pos.findClosestByPath(FIND_SOURCES);
-        if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
-            creep.say('🔄 harvest');
-        }
+        actHarvest.run(creep);
     }
 }
 
@@ -114,43 +110,29 @@ function findTarget(creep)
     else
     {
         var repairTarget = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => {
-            		return ((s.structureType == STRUCTURE_RAMPART) && (s.hits < s.hitsMax));
-            	}
-            	
-            });
-        
+            filter: (s) => {
+        		return ((s.structureType == STRUCTURE_WALL || s.structureType == STRUCTURE_RAMPART) && (s.hits < s.hitsMax));
+        	}
+        });
         if(repairTarget.length > 0){
-            repairTarget = repairTarget[0].id;
-            console.log('Repairing Defenses :' + repairTarget);
-            creep.memory.repairTarget = repairTarget;
-        }else{//find all the walls
-            var repairTarget = creep.room.find(FIND_STRUCTURES, {
-                filter: (s) => {
-            		return ((s.structureType == STRUCTURE_WALL) && (s.hits < s.hitsMax));
-            	}
-            });
-            if(repairTarget.length > 0){//if you found walls that aren't fully repaired
-                var i=0;
-                creep.memory.repairTarget = repairTarget[0].id;
-                var target = Game.getObjectById(creep.memory.repairTarget);
-                while(i<repairTarget.length-1)
-                {
-                    if(repairTarget[i] != undefined && target.hits>repairTarget[i].hits)//compare the walls, find the lowest health one
-                    {
-                    	creep.memory.repairTarget = repairTarget[i].id;
-                    	target = repairTarget[i];
-                    }
-                    i++;
-                }
-                console.log('Repairing Walls :' + creep.memory.repairTarget);
-            }
-            else
+            var i=0;
+            creep.memory.repairTarget = repairTarget[0].id;
+            var target = Game.getObjectById(creep.memory.repairTarget);
+            while(i<repairTarget.length)
             {
-                console.log('no valid repair targets found, please check code');
+                if(repairTarget[i] != undefined && target.hits>repairTarget[i].hits)
+                {
+                	creep.memory.repairTarget = repairTarget[i].id;
+                	target = repairTarget[i];
+                }
+                i++;
             }
+            console.log('Repairing Walls :' + creep.memory.repairTarget);
         }
-        
+        else
+        {
+            //console.log('no valid repair targets found, please check code');
+        }
     }
 
 }

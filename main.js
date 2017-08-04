@@ -10,17 +10,26 @@ var roleLDMule = require('role.LDMule');
 
 module.exports.loop = function () {
 var MaxHarvest = 0;
-var MaxBuilder = 1;
+var MaxBuilder = 2;
 var MaxUpgrader = 5;
-var MaxFixer = 1;
-var MaxMule = 4;
+var MaxFixer =1;
+var MaxMule = 2;
 var MaxTick = 2;
-var MaxForager =6;
+var MaxForager =0;
 var MaxLDMule = 0;
 var MaxLDTick = 0;
-var MaxForager3 =6;
-var MaxForager7 =6;
+var MaxForager3 =0;
+var MaxForager7 =0;
 
+    /*
+    var tower = Game.getObjectById('5936cf0196f7ee7950017ccf');
+    if(tower) {
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+    }
+    */
 	for(let name in Memory.creeps)
 	{
 		if(Game.creeps[name]==undefined)
@@ -29,13 +38,7 @@ var MaxForager7 =6;
 		}
 	}
 
-    var tower = Game.getObjectById('035fa101ff52d53');
-    if(tower) {
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-    }
+
 	var MyCreeps = [0,0,0,0,0,0,0,0,0,0,0];
     for(var name in Game.creeps) {
         var creep = Game.creeps[name];
@@ -94,21 +97,22 @@ var MaxForager7 =6;
     		break;
 		}
     }
-	if (Game.spawns['Spawn.Prime'].room.energyAvailable==Game.spawns['Spawn.Prime'].room.energyCapacityAvailable && !Game.spawns['Spawn.Prime'].spawning)
+	if (Game.spawns['Spawn.Prime'].room.energyAvailable == Game.spawns['Spawn.Prime'].room.energyCapacityAvailable && !Game.spawns['Spawn.Prime'].spawning)
 	{
 	    //console.log(MyCreeps.toString());
 		if(MyCreeps[0]<MaxHarvest)
 		{
 		    Memory.isbusy=true;
 			//spawn harvester
-			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY, MOVE], undefined,{role:'harvester'} );
+			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, MOVE,MOVE], undefined,{role:'harvester'} );
 			console.log('Spawning: harvester '+ name);
 		}
 		else
 		{
     		if(MyCreeps[1]<MaxUpgrader)
     		{
-    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, WORK, WORK, CARRY, CARRY, CARRY, CARRY,MOVE,MOVE, MOVE, MOVE], undefined,{role:'upgrader'} );
+    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY, MOVE, MOVE,WORK, CARRY, MOVE, MOVE
+    			], undefined,{role:'upgrader'} );
     			console.log('Spawning: upgrader '+ name);
     			Memory.isbusy=true;
     		}
@@ -116,7 +120,7 @@ var MaxForager7 =6;
     		{
         		if(MyCreeps[2]<MaxBuilder)
         		{
-        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK,CARRY, MOVE,CARRY, MOVE, MOVE, MOVE], undefined,{role:'builder'} );
+        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY,CARRY, MOVE,MOVE], undefined,{role:'builder'} );
         			console.log('Spawning: builder '+ name);
         			Memory.isbusy=true;
         		}
@@ -126,7 +130,7 @@ var MaxForager7 =6;
             		{
             		    Memory.isbusy=true;
             			//spawn harvester
-            			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK,CARRY, CARRY,MOVE,MOVE], undefined,{role:'fixer'} );
+            			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY, CARRY,MOVE,MOVE], undefined,{role:'fixer'} );
             			console.log('Spawning: fixer '+ name);
             		}
             		else
@@ -135,7 +139,7 @@ var MaxForager7 =6;
                 		{
                 		    Memory.isbusy=true;
                 			//spawn harvester
-                			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE], undefined,{role:'mule'} );
+                			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, CARRY,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
                 			console.log('Spawning: Mule '+ name);
                 		}
                 		else
@@ -144,7 +148,7 @@ var MaxForager7 =6;
                     		{
                     		    Memory.isbusy=true;
                     			//spawn tick
-                    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK, WORK, MOVE], undefined,{role:'tick'} );
+                    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK, WORK,MOVE], undefined,{role:'tick'} );
                     			console.log('Spawning: Tick '+ name);
                     		}
                     		
@@ -154,7 +158,7 @@ var MaxForager7 =6;
                         		{
                         		    Memory.isbusy=true;
                         			//spawn tick
-                        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 1} );
+                        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY,  MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 1} );
                         			console.log('Spawning: Forager '+ name);
                         		}
                         		else
