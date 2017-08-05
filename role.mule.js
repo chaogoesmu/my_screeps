@@ -9,12 +9,12 @@ var roleMule = {
 		if(creep.memory.MyTask != 0 && creep.carry.energy == 0)
 		{
 			creep.memory.MyTask = 0;
-			creep.say('🔄 FETCH');
+			//creep.say('🔄 FETCH');
 		}
 		if(creep.memory.MyTask !=1 && creep.carry.energy == creep.carryCapacity)
 		{
 			creep.memory.MyTask = 1;
-			creep.say('⚡ DEAL');
+			//creep.say('⚡ DEAL');
 		}
 
 		
@@ -60,7 +60,7 @@ function getEnergy(creep)
     {
         creep.memory.MyTask = 2;
     }
-    target = creep.pos.findClosestByRange(FIND_DROPPED_ENERGY);
+    target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
     if(!target)
     {
         var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
@@ -106,7 +106,7 @@ function getEnergyEmergency(creep)
         }
         else
         {
-            console.log('Mule couldn\'t find energy');
+            //console.log('Mule couldn\'t find energy');
         }
 }
 function depositEnergy(creep)

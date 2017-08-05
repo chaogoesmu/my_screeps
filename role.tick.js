@@ -46,13 +46,16 @@ function FindMoveContainer(creep)
         		
         		// if there is a container next to the source
         		if (containers!= undefined) {
+        		    (!_.some(creepsInRoom, c => c.memory.role == 'tick' && c.memory.MyContainer == containers[0].id)) 
         			creep.memory.MyContainer = containers[0].id;
         			creep.memory.MySource = source.id;
         			break;
         		}
         		else
         		{
-        		    console.log('not finding containers');
+           			creep.memory.MyContainer = containers[1].id;
+        			creep.memory.MySource = source.id;
+        			break;
         		}
         	}
         }

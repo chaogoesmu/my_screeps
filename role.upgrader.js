@@ -1,3 +1,6 @@
+var actHarvest = require('action.harvest');
+
+
 var roleUpgrader = {
 
     /** @param {Creep} creep **/
@@ -28,8 +31,7 @@ function getEnergy(creep)
 {
     var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
             filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER ||
-                structure.structureType == STRUCTURE_STORAGE) && (structure.store.energy > creep.carryCapacity-creep.carry.energy);
+                return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && (structure.store.energy > creep.carryCapacity-creep.carry.energy);
                 }
         });
         if(target!= undefined) {
@@ -39,11 +41,7 @@ function getEnergy(creep)
         }
         else
         {
-			var source = creep.pos.findClosestByPath(FIND_SOURCES);
-            if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}});
-                creep.say('🔄 harvest');
-            }
+			actHarvest.run(creep);
         }
 }
 module.exports = roleUpgrader;
