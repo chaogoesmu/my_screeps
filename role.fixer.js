@@ -56,7 +56,7 @@ var roleFixer = {
     				if(target.hits == target.hitsMax)
     				{
     				    //findTarget(creep);
-    				    console.log('repaired ' + Game.getObjectById(creep.memory.repairTarget).name);
+    				    //console.log('repaired ' + Game.getObjectById(creep.memory.repairTarget));
     				    creep.memory.repairTarget = undefined;
     				}
     				else

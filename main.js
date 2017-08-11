@@ -11,7 +11,7 @@ var roleLDMule = require('role.LDMule');
 module.exports.loop = function () {
 var MaxHarvest = 0;
 var MaxBuilder = 1;
-var MaxUpgrader = 3;
+var MaxUpgrader = 2;
 var MaxFixer =2;
 var MaxMule = 3;
 var MaxTick = 2;
@@ -21,8 +21,28 @@ var MaxLDTick = 0;
 var MaxForager3 =2;
 var MaxForager5 =4;
 
-    //rip this into its own function so eventually I can just do a find towers in room and run them, not needed yet
+    //rip this into its own function so eventually I can just do a find towers in room and run them, not needed yet, quick and dirty fix for now
     var tower = Game.getObjectById('59845a1d1d893843684ddbe8');
+    if(tower) {
+        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+        if(closestHostile) {
+            tower.attack(closestHostile);
+        }
+        else
+        {
+            
+            var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART});
+            for (let ramps of rampRepair)
+            {
+                if(ramps.hits < 50000)
+                {
+                    tower.repair(ramps);
+                }
+            }
+            
+        }
+    }
+    var tower = Game.getObjectById('5986d1badb74933f00bf440d');
     if(tower) {
         var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
         if(closestHostile) {
@@ -113,47 +133,46 @@ var MaxForager5 =4;
 	if (Game.spawns['Spawn.Prime'].room.energyAvailable == Game.spawns['Spawn.Prime'].room.energyCapacityAvailable && !Game.spawns['Spawn.Prime'].spawning)
 	{
 	    //console.log(MyCreeps.toString());
-		if(MyCreeps[0]<MaxHarvest)
+		if(MyCreeps[4]<MaxMule)
 		{
-		    spawnGeneral('Spawn.Prime', 'harvester');
+			//spawn harvester
+			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
+			console.log('Spawning: Mule '+ name);
 		}
 		else
 		{
-    		if(MyCreeps[1]<MaxUpgrader)
-    		{
-    			spawnGeneral('Spawn.Prime', 'upgrader');
-    		}
-    		else
-    		{
-        		if(MyCreeps[2]<MaxBuilder)
-        		{
-        			spawnGeneral('Spawn.Prime', 'builder');
-        		}
-        		else
-        		{
-    				if(MyCreeps[3]<MaxFixer)
-            		{
-            		    spawnGeneral('Spawn.Prime', 'fixer');
-            		}
-            		else
-            		{
-    		    		if(MyCreeps[4]<MaxMule)
-                		{
-                			//spawn harvester
-                			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
-                			console.log('Spawning: Mule '+ name);
-                		}
-                		else
-                		{
-        		    		if(MyCreeps[5]<MaxTick)
-                    		{
-                    			//spawn tick
-                    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK, WORK,MOVE,MOVE,MOVE], undefined,{role:'tick'} );
-                    			console.log('Spawning: Tick '+ name);
-                    		}
-                    		
-                    		else
-                    		{
+			if(MyCreeps[5]<MaxTick)
+			{
+				//spawn tick
+				var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK, WORK,MOVE,MOVE,MOVE], undefined,{role:'tick'} );
+				console.log('Spawning: Tick '+ name);
+			}
+			else
+			{
+				if(MyCreeps[0]<MaxHarvest)
+				{
+					spawnGeneral('Spawn.Prime', 'harvester',8);
+				}
+				else
+				{
+					if(MyCreeps[1]<MaxUpgrader)
+					{
+						spawnGeneral('Spawn.Prime', 'upgrader',6);
+					}
+					else
+					{
+						if(MyCreeps[2]<MaxBuilder)
+						{
+							spawnGeneral('Spawn.Prime', 'builder',6);
+						}
+						else
+						{
+							if(MyCreeps[3]<MaxFixer)
+							{
+								spawnGeneral('Spawn.Prime', 'fixer',3);
+							}
+							else
+							{
             		    		if(MyCreeps[6]<MaxForager)
                         		{
                         			//spawn tick
@@ -181,7 +200,7 @@ var MaxForager5 =4;
                         		    		if(MyCreeps[9]<MaxForager3)
                                     		{
                                     			//spawn tick
-                                    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 3} );
+                                    			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,WORK, WORK, CARRY, CARRY,  MOVE,MOVE,  MOVE,MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 3} );
                                     			console.log('Spawning: Forager '+ name);
                                     		}
                                 		    else
@@ -191,17 +210,18 @@ var MaxForager5 =4;
                                         			//spawn tick
                                         			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 5} );
                                         			console.log('Spawning: Forager '+ name);
-                                        		}
-                                		    }
-                                		}
-                            		}
-                        		}
-                    		}
-                		}
-            		}
-        		}
-    		}
-    	}
+                                        		
+												}
+											}
+										}
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 	else
 	{
@@ -218,12 +238,19 @@ var MaxForager5 =4;
 	}
     
 }
-function spawnGeneral(spawnPoint, typeOfSpawn)
+function spawnGeneral(spawnPoint, typeOfSpawn, max = -1)
 {
     var top = Game.spawns[spawnPoint].room.energyCapacityAvailable;
     var loop = top/250;
     var i=1;
     var body = [];
+	if(max > 0)
+	{
+		if(max<loop)
+		{
+			loop=max;
+		}
+	}
     while(i<loop)
     {
         body.push(WORK);
