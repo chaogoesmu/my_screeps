@@ -11,7 +11,7 @@ var roleLDMule = require('role.LDMule');
 module.exports.loop = function () {
 var MaxHarvest = 0;
 var MaxBuilder = 1;
-var MaxUpgrader = 2;
+var MaxUpgrader = 3;
 var MaxFixer =2;
 var MaxMule = 3;
 var MaxTick = 2;
@@ -19,49 +19,12 @@ var MaxForager =0;
 var MaxLDMule = 0;
 var MaxLDTick = 0;
 var MaxForager3 =2;
-var MaxForager5 =4;
+var MaxForager5 =0;
 
     //rip this into its own function so eventually I can just do a find towers in room and run them, not needed yet, quick and dirty fix for now
-    var tower = Game.getObjectById('59845a1d1d893843684ddbe8');
-    if(tower) {
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-        else
-        {
-            
-            var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART});
-            for (let ramps of rampRepair)
-            {
-                if(ramps.hits < 50000)
-                {
-                    tower.repair(ramps);
-                }
-            }
-            
-        }
-    }
-    var tower = Game.getObjectById('5986d1badb74933f00bf440d');
-    if(tower) {
-        var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
-        if(closestHostile) {
-            tower.attack(closestHostile);
-        }
-        else
-        {
-            
-            var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART});
-            for (let ramps of rampRepair)
-            {
-                if(ramps.hits < 50000)
-                {
-                    tower.repair(ramps);
-                }
-            }
-            
-        }
-    }
+    runTower('59845a1d1d893843684ddbe8');
+
+    runTower('5986d1badb74933f00bf440d');
 
 	for(let name in Memory.creeps)
 	{
@@ -163,7 +126,7 @@ var MaxForager5 =4;
 					{
 						if(MyCreeps[2]<MaxBuilder)
 						{
-							spawnGeneral('Spawn.Prime', 'builder',6);
+							spawnGeneral('Spawn.Prime', 'builder');
 						}
 						else
 						{
@@ -207,8 +170,8 @@ var MaxForager5 =4;
                                 		    {
                             		    		if(MyCreeps[10]<MaxForager5)
                                         		{
-                                        			//spawn tick
-                                        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 5} );
+                                        			//spawn forager direction 5, this is temporary to just be an annoyance to littleBird.
+                                        			var name = Game.spawns['Spawn.Prime'].createCreep( [/*WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE,*/ TOUGH,TOUGH,TOUGH,TOUGH,TOUGH, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 5} );
                                         			console.log('Spawning: Forager '+ name);
                                         		
 												}
@@ -231,13 +194,31 @@ var MaxForager5 =4;
 	    }
 	}
 
-	if(Memory.report == true)
-	{
-	    console.log('harvester/upgrader/builder/' + MyCreeps.toString());
-	    Memory.report = false;
-	}
     
 }
+
+/*
+ok seriously what does a room need to have
+first it needs what room we are actually talking about, that could be a little important
+next it really needs to know what creeps it should have
+it should also be able to find what creeps it does have
+it should know where to spawn things, though that may be a global thing the spawn manager
+but we'll make it a function so that can all be changed later.
+and lastly it should run ever creep, currently I run creeps based on wierdass criteria
+that should be condensed down... 
+ARRRGGGHHH Everytime I start working on something I realize the thousand and one other things I should be working on
+fuckit lets run with the spaghetti for now, debating about switching projects is killing my production
+todo: change EVERY SPAWN CODE TO HAVE A BASE ROOM
+*/
+class myRooms{
+	constructor(roomName, myCreeps, mySpawn){
+		this.roomName = roomName;
+		this.myCreeps = Game.creeps.filter(c => c.name == this.roomName);
+		this.mySpawn = mySpawn;
+	}
+	
+}
+
 function spawnGeneral(spawnPoint, typeOfSpawn, max = -1)
 {
     var top = Game.spawns[spawnPoint].room.energyCapacityAvailable;
@@ -261,4 +242,33 @@ function spawnGeneral(spawnPoint, typeOfSpawn, max = -1)
     }
 	var name = Game.spawns[spawnPoint].createCreep( body, undefined,{role:typeOfSpawn} );
 	console.log('Spawning: '+typeOfSpawn+ ', ' + name);
+}
+
+function runTower(towerID)
+{
+	var tower = Game.getObjectById(towerID);
+	if(tower) {
+		var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
+		if(closestHostile) {
+			tower.attack(closestHostile);
+		}
+		else
+		{
+			
+			var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL});
+			for (let ramps of rampRepair)
+			{
+				if(ramps.hits < 500000)//this could be a problem during an assault where towers start repairing instead of attacking.
+				{
+					tower.repair(ramps);
+				}
+			}
+			var creepToRepair = tower.pos.findClosestByRange(FIND_MY_CREEPS, {filter: c=> c.hits < c.hitsMax});
+			if (creepToRepair != undefined)
+			{
+				tower.heal(creepToRepair);
+			}
+			
+		}
+	}
 }
