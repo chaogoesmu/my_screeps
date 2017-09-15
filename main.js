@@ -11,20 +11,25 @@ var roleLDMule = require('role.LDMule');
 module.exports.loop = function () {
 var MaxHarvest = 0;
 var MaxBuilder = 1;
-var MaxUpgrader = 3;
+var MaxUpgrader = 1;
 var MaxFixer =2;
-var MaxMule = 3;
+var MaxMule = 4;
 var MaxTick = 2;
 var MaxForager =0;
 var MaxLDMule = 0;
 var MaxLDTick = 0;
-var MaxForager3 =2;
-var MaxForager5 =0;
+var MaxForager3 =0;
+var MaxForager5 =7;
 
-    //rip this into its own function so eventually I can just do a find towers in room and run them, not needed yet, quick and dirty fix for now
-    runTower('59845a1d1d893843684ddbe8');
+if(Game.spawns['Spawn.Prime'].room.energyCapacityAvailabl > 1100)
+{
+    //mehhhhh
+}
 
-    runTower('5986d1badb74933f00bf440d');
+
+    runTower('59b47e88e1065233e38d42ee');
+    runTower('59b820293740587d2ce95b44');
+    
 
 	for(let name in Memory.creeps)
 	{
@@ -93,50 +98,53 @@ var MaxForager5 =0;
     		break;
 		}
     }
-	if (Game.spawns['Spawn.Prime'].room.energyAvailable == Game.spawns['Spawn.Prime'].room.energyCapacityAvailable && !Game.spawns['Spawn.Prime'].spawning)
+    
+	if (!Game.spawns['Spawn.Prime'].spawning)
 	{
 	    //console.log(MyCreeps.toString());
-		if(MyCreeps[4]<MaxMule)
+		if(MyCreeps[4]<MaxMule )// && Game.spawns['Spawn.Prime'].room.energyAvailable > 1100
 		{
-			//spawn harvester
+			//spawn mule
 			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE,CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule'} );
+			//var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE], undefined,{role:'mule'} );
 			console.log('Spawning: Mule '+ name);
 		}
 		else
 		{
-			if(MyCreeps[5]<MaxTick)
+			if(MyCreeps[5]<MaxTick)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 700
 			{
 				//spawn tick
-				var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK, WORK,MOVE,MOVE,MOVE], undefined,{role:'tick'} );
+				var name = Game.spawns['Spawn.Prime'].createCreep( [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE], undefined,{role:'tick'} );
 				console.log('Spawning: Tick '+ name);
 			}
 			else
 			{
-				if(MyCreeps[0]<MaxHarvest)
+				if(MyCreeps[0]<MaxHarvest )//&& Game.spawns['Spawn.Prime'].room.energyAvailable > 2000
 				{
 					spawnGeneral('Spawn.Prime', 'harvester',8);
 				}
 				else
 				{
-					if(MyCreeps[1]<MaxUpgrader)
+					if(MyCreeps[1]<MaxUpgrader)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 2000
 					{
-						spawnGeneral('Spawn.Prime', 'upgrader',6);
+						spawnGeneral('Spawn.Prime', 'upgrader',8);
 					}
 					else
 					{
-						if(MyCreeps[2]<MaxBuilder)
+						if(MyCreeps[2]<MaxBuilder)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 2500
 						{
-							spawnGeneral('Spawn.Prime', 'builder');
+						    //console.log(MaxBuilder + '/' + MyCreeps[2]);
+							spawnGeneral('Spawn.Prime', 'builder', 10);
 						}
 						else
 						{
-							if(MyCreeps[3]<MaxFixer)
+							if(MyCreeps[3]<MaxFixer )// && Game.spawns['Spawn.Prime'].room.energyAvailable > 750
 							{
 								spawnGeneral('Spawn.Prime', 'fixer',3);
 							}
 							else
 							{
-            		    		if(MyCreeps[6]<MaxForager)
+            		    		if(MyCreeps[6]<MaxForager && Game.spawns['Spawn.Prime'].room.energyAvailable > 250)
                         		{
                         			//spawn tick
                         			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY,  MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 1} );
@@ -144,7 +152,7 @@ var MaxForager5 =0;
                         		}
                         		else
                         		{
-                		    		if(MyCreeps[8]<MaxLDMule)
+                		    		if(MyCreeps[8]<MaxLDMule  && Game.spawns['Spawn.Prime'].room.energyAvailable > 250)
                             		{
                             			//spawn harvester
                             			var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE], undefined,{role:'ldmule'} );
@@ -152,7 +160,7 @@ var MaxForager5 =0;
                             		}
                             		else
                             		{
-                    		    		if(MyCreeps[7]<MaxLDTick)
+                    		    		if(MyCreeps[7]<MaxLDTick && Game.spawns['Spawn.Prime'].room.energyAvailable > 400)
                                 		{
                                 			//spawn harvester
                                 			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, WORK ,MOVE,MOVE], undefined,{role:'ldtick'} );
@@ -160,7 +168,7 @@ var MaxForager5 =0;
                                 		}
                                 		else
                                 		{
-                        		    		if(MyCreeps[9]<MaxForager3)
+                        		    		if(MyCreeps[9]<MaxForager3  && Game.spawns['Spawn.Prime'].room.energyAvailable > 800)
                                     		{
                                     			//spawn tick
                                     			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,WORK, WORK, CARRY, CARRY,  MOVE,MOVE,  MOVE,MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 3} );
@@ -168,10 +176,10 @@ var MaxForager5 =0;
                                     		}
                                 		    else
                                 		    {
-                            		    		if(MyCreeps[10]<MaxForager5)
+                            		    		if(MyCreeps[10]<MaxForager5  && Game.spawns['Spawn.Prime'].room.energyAvailable > 1000)
                                         		{
                                         			//spawn forager direction 5, this is temporary to just be an annoyance to littleBird.
-                                        			var name = Game.spawns['Spawn.Prime'].createCreep( [/*WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE,*/ TOUGH,TOUGH,TOUGH,TOUGH,TOUGH, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 5} );
+                                        			var name = Game.spawns['Spawn.Prime'].createCreep( [WORK, WORK, CARRY, CARRY,  MOVE,MOVE, MOVE], undefined,{role:'forager', MyHome:Game.spawns['Spawn.Prime'].room.name, MyTravel: 5} );
                                         			console.log('Spawning: Forager '+ name);
                                         		
 												}
@@ -192,7 +200,8 @@ var MaxForager5 =0;
 	    {
 	        Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY,MOVE,MOVE], undefined,{role:'harvester'} );
 	    }
-	}
+	
+}
 
     
 }
@@ -200,15 +209,15 @@ var MaxForager5 =0;
 /*
 ok seriously what does a room need to have
 first it needs what room we are actually talking about, that could be a little important
-next it really needs to know what creeps it should have
+next it really needs to know what creeps it should have, I should just have generics and job specific creeps
 it should also be able to find what creeps it does have
 it should know where to spawn things, though that may be a global thing the spawn manager
 but we'll make it a function so that can all be changed later.
-and lastly it should run ever creep, currently I run creeps based on wierdass criteria
+and lastly it should run every creep, currently I run creeps based on wierd criteria, this should be centralized instead of individual agents
 that should be condensed down... 
 ARRRGGGHHH Everytime I start working on something I realize the thousand and one other things I should be working on
-fuckit lets run with the spaghetti for now, debating about switching projects is killing my production
 todo: change EVERY SPAWN CODE TO HAVE A BASE ROOM
+todo: completely rewrite all screeps code, look at harvester and forager code for examples.
 */
 class myRooms{
 	constructor(roomName, myCreeps, mySpawn){
@@ -219,18 +228,21 @@ class myRooms{
 	
 }
 
-function spawnGeneral(spawnPoint, typeOfSpawn, max = -1)
+function spawnGeneral(spawnPoint, typeOfSpawn, max = 13)
 {
     var top = Game.spawns[spawnPoint].room.energyCapacityAvailable;
-    var loop = top/250;
-    var i=1;
+    
+    var loop = Math.floor(top/250);
+    var i=0;
     var body = [];
-	if(max > 0)
+	if(max<loop)
 	{
-		if(max<loop)
-		{
-			loop=max;
-		}
+		loop=max;
+	}
+	if(Game.spawns['Spawn.Prime'].room.energyAvailable < loop*250)
+	{
+	    //console.log('Failed to spawn: '+typeOfSpawn + ' room has: ' +Game.spawns['Spawn.Prime'].room.energyAvailable + ' / ' +Game.spawns[spawnPoint].room.energyCapacityAvailable + ' seeking: ' + loop*250);
+	    return;
 	}
     while(i<loop)
     {
@@ -239,9 +251,10 @@ function spawnGeneral(spawnPoint, typeOfSpawn, max = -1)
         body.push(MOVE);
         body.push(MOVE);
         i++;
+        //console.log('looped once: ' + i);
     }
 	var name = Game.spawns[spawnPoint].createCreep( body, undefined,{role:typeOfSpawn} );
-	console.log('Spawning: '+typeOfSpawn+ ', ' + name);
+	console.log('Spawning: '+typeOfSpawn+ ', ' + name + ' size: ' + loop);
 }
 
 function runTower(towerID)
@@ -258,7 +271,7 @@ function runTower(towerID)
 			var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL});
 			for (let ramps of rampRepair)
 			{
-				if(ramps.hits < 500000)//this could be a problem during an assault where towers start repairing instead of attacking.
+				if(ramps.hits < 5000)//this could be a problem during an assault where towers start repairing instead of attacking.
 				{
 					tower.repair(ramps);
 				}
