@@ -1,5 +1,5 @@
 var roleBuilder = require('role.builder');
-var actHarvest = require('action.harvest');
+var actResupply = require('action.resupply');
 //var harv = require('mod.tools');
 /*
  * Module code goes here. Use 'module.exports' to export things:
@@ -37,7 +37,7 @@ var roleFixer = {
 		switch(creep.memory.MyTask){
 		case 0:
 			//hungry, go eat
-            getEnergy(creep);
+            actResupply.run(creep);
 			break;
 		case 1:
 			//do I already have something to fix? If not find something to fix and say fixit
@@ -81,27 +81,6 @@ var roleFixer = {
 		}
     }
 };
-function getEnergy(creep)
-{
-
-var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-        filter: (structure) => {
-            return (structure.structureType == STRUCTURE_CONTAINER ||
-            structure.structureType == STRUCTURE_STORAGE) && (structure.store.energy > creep.carryCapacity-creep.carry.energy);
-            }
-    });
-    if(target!= undefined) {
-        if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-            creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-        }
-    }
-    else
-    {
-        actHarvest.run(creep);
-    }
-}
-
-
 
 
 function findTarget(creep)

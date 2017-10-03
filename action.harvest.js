@@ -2,9 +2,11 @@ var actHarvest = {
 
     /** @param {Creep} creep **/
     run: function(creep) {
+        //find dropped resources
         target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
         if(!target)
         {
+            //if there are no dropped resources, lets find out if I have a set source
             if(creep.memory.MySource == undefined)
             {
                 console.log(creep.name + ' Does not have a source yet, re-acquiring');
@@ -13,9 +15,14 @@ var actHarvest = {
         	    {
         	        creep.memory.MySource = creep.memory.MySource.id;
         	    }
+        	    else
+        	    {
+        	        //can't find a source, do not currently care but this may be usefull later.
+        	    }
             }
             else
             {
+                //I already have a source, so just go to it and harvest
                 var source = Game.getObjectById(creep.memory.MySource)
                 if(creep.harvest(source) == ERR_NOT_IN_RANGE) {
                     if(creep.moveTo(source, {visualizePathStyle: {stroke: '#ffaa00'}})== ERR_NO_PATH){
