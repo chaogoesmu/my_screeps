@@ -1,4 +1,4 @@
-var actHarvest = require('action.harvest');
+var actResupply = require('action.resupply');
 
 
 var roleUpgrader = {
@@ -7,7 +7,7 @@ var roleUpgrader = {
     run: function(creep) {
         if(creep.fatigue==0){
             if(!creep.memory.upgrading) {
-                getEnergy(creep);
+                actResupply.run(creep);
                 }
             }
     	    if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
@@ -21,27 +21,10 @@ var roleUpgrader = {
             }
             if(creep.memory.upgrading && creep.carry.energy == 0)
             {
-                creep.say('🔄 harvest');
+                creep.say('🔄 Resupply');
                 creep.memory.upgrading = false;
             }
         }
     };
 
-function getEnergy(creep)
-{
-    var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
-            filter: (structure) => {
-                return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && (structure.store.energy > creep.carryCapacity-creep.carry.energy);
-                }
-        });
-        if(target!= undefined) {
-            if(creep.withdraw(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
-                creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
-            }
-        }
-        else
-        {
-			actHarvest.run(creep);
-        }
-}
 module.exports = roleUpgrader;
