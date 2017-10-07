@@ -5,15 +5,16 @@ var roleFixer = require('role.fixer');
 var roleMule = require('role.mule');
 var roleTick = require('role.tick');
 var roleForager = require('role.forager');
-var roleLDTick = require('role.LDTick');
-var roleLDMule = require('role.LDMule');
+var roleClaimer = require('role.claimer');
+var roomControl = require('room.alpha');
+
 
 module.exports.loop = function () {
 var MaxHarvest = 0;
 var MaxBuilder = 1;
-var MaxUpgrader = 1;
+var MaxUpgrader = 2;
 var MaxFixer =1;
-var MaxMule = 3;
+var MaxMule = 4;
 var MaxTick = 2;
 var MaxForager =0;
 var MaxLDMule = 0;
@@ -30,6 +31,7 @@ if(Game.spawns['Spawn.Prime'].room.energyCapacityAvailabl > 1100)
     runTower('59b47e88e1065233e38d42ee');
     runTower('59b820293740587d2ce95b44');
     runTower('59c87ac66e8ccf1376611345');
+    
     
     
 
@@ -88,13 +90,8 @@ if(Game.spawns['Spawn.Prime'].room.energyCapacityAvailabl > 1100)
                     roleForager.run(creep);
                 }
                 break;
-            case 'ldtick':
-                roleLDTick.run(creep);
-                MyCreeps[7]+=1
-                break;
-            case 'ldmule':
-                roleLDMule.run(creep);
-                MyCreeps[8]+=1
+            case "claimer":
+                roleClaimer.run(creep);
                 break;
     		default:
     		break;
@@ -198,14 +195,14 @@ if(Game.spawns['Spawn.Prime'].room.energyCapacityAvailabl > 1100)
 	}
 	else
 	{
-	    if(MyCreeps[4]<1 && MyCreeps[5]<1 && MyCreeps[0]<1)//just in case, if there are no ticks, harvesters or mules, spawn a harvester
+	    if(MyCreeps[4]<1 && MyCreeps[5]<1 && MyCreeps[0]<5)//just in case, if there are no ticks, harvesters or mules, spawn a harvester
 	    {
 	        Game.spawns['Spawn.Prime'].createCreep( [WORK, CARRY,MOVE,MOVE], undefined,{role:'harvester'} );
 	    }
 	
 }
 
-    
+    roomControl.run('e19s235');
 }
 
 /*
@@ -262,6 +259,7 @@ function spawnGeneral(spawnPoint, typeOfSpawn, max = 13)
 function runTower(towerID)
 {
 	var tower = Game.getObjectById(towerID);
+	var minRepair = 67000;
 	if(tower) {
 		var closestHostile = tower.pos.findClosestByRange(FIND_HOSTILE_CREEPS);
 		if(closestHostile) {
@@ -273,7 +271,7 @@ function runTower(towerID)
 			var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL});
 			for (let ramps of rampRepair)
 			{
-				if(ramps.hits < 522000)//this could be a problem during an assault where towers start repairing instead of attacking.
+				if(ramps.hits < minRepair)//this could be a problem during an assault where towers start repairing instead of attacking.
 				{
 					tower.repair(ramps);
 				}
