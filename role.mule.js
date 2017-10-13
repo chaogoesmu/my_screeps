@@ -61,7 +61,7 @@ function getEnergy(creep)
     {
         creep.memory.MyTask = 2;
     }
-    target = creep.pos.findClosestByRange(FIND_DROPPED_RESOURCES);
+    target = creep.pos.findClosestByPath(FIND_DROPPED_RESOURCES);
     if(!target)
     {
         var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {

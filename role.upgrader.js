@@ -13,10 +13,6 @@ var roleUpgrader = {
         {
             myUpgrade = Game.getObjectById(creep.memory.MyController);
             if(creep.fatigue==0){
-                if(!creep.memory.upgrading) {
-                    actResupply.run(creep);
-                    }
-                }
         	    if(!creep.memory.upgrading && creep.carry.energy == creep.carryCapacity) {
         	        creep.memory.upgrading = true;
         	        creep.say('⚡ upgrade');
@@ -30,6 +26,10 @@ var roleUpgrader = {
                 {
                     creep.say('🔄 Resupply');
                     creep.memory.upgrading = false;
+                }
+                if(!creep.memory.upgrading) {
+                    actResupply.run(creep);
+                    }
                 }
             }
         }

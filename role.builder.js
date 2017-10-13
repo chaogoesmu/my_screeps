@@ -15,6 +15,7 @@ var roleBuilder = {
 		//let people know if we're dying, it's just polite
         if(creep.ticksToLive<10){
             creep.say('Dying ' + creep.ticksToLive);
+            //TODO: respawn queu
         }
 		
 		//if fatigue is run out, dont do anything

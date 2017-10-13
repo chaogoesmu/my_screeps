@@ -36,12 +36,17 @@ var actDeposit = {
             }
         	else
     		{
-    		    //if I couldn't find a tower or extension, lets find a spawn instead
+    		    //if I couldn't find a tower or extension, lets find a spawn instead TODO: not working, find out why later.
     			var target = creep.pos.findClosestByPath(FIND_STRUCTURES, {
     				filter: (structure) => {
     					(structure.structureType == STRUCTURE_SPAWN) && structure.energy < structure.energyCapacity;
     					}
     				});
+    			if(target==undefined)
+    			{
+    			    //
+    			   // console.log(creep.name + ' in room ' + creep.memory.myRoom + 'cannot find a spawn that needs energy');
+    			}
     			if(target!=undefined) {
     				if(creep.transfer(target, RESOURCE_ENERGY) == ERR_NOT_IN_RANGE) {
     					creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});

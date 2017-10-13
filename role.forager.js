@@ -1,6 +1,6 @@
 var actTravel = require('action.travel');
 var actDeposit = require('action.deposit');
-var actHarvest = require('action.harvest');
+var actResupply = require('action.resupply');
 
 var roleForager = {
 
@@ -38,7 +38,7 @@ var roleForager = {
             else
             {
                 //forage
-                actHarvest.run(creep);
+                actResupply.run(creep);
             }
         }
 
