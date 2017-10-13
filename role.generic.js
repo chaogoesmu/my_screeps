@@ -5,7 +5,7 @@ var actResupply = require('action.resupply');
 
 var roleGeneric = {
     run: function(creep) {
-        
+        target = Game.getObjectById(creep.memory.target);
         if(creep.carry.energy ==0){
             creep.memory.action = 'resupply';//change this later to be targetted, works for now.
         }
@@ -20,7 +20,7 @@ var roleGeneric = {
                 actDeposit.run(creep);
                 break;
             case 'repair':
-                target = Game.getObjectById(creep.memory.target);
+                
                 if(target.hits == target.hitsMax){
                     creep.memory.action = 'idle';
                     break;
@@ -34,7 +34,6 @@ var roleGeneric = {
                 actResupply.run(creep);
                 break;
             case 'build' :
-                target = Game.getObjectById(creep.memory.target);
                 if (target==undefined)
                 {
                     creep.memory.action = 'idle';
@@ -48,6 +47,12 @@ var roleGeneric = {
                 creep.say('idling');
                 break;
             //ehhhh.... no idea brains starting to melt
+            case 'upgrade' :
+                //creep.say('upgrading');
+                if(creep.upgradeController(target) == ERR_NOT_IN_RANGE) {
+                    creep.moveTo(target, {visualizePathStyle: {stroke: '#ffffff'}});
+                }
+                break;
             default:
                 //console.log('no action taken');
                 break;

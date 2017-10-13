@@ -88,12 +88,14 @@ var runRoom = {
     		    //console.log('idle creeps: ' + idlecreeps.length);
     		    if(i<jobs.length)
     		    {
+    		        idlecreeps[i].say(jobs[i][0]);
     		        idlecreeps[i].memory.action =jobs[i][0];
     		        idlecreeps[i].memory.target =jobs[i][1];
     		    }
     		    else
     		    {
-    		        idlecreeps[i].memory.action ='deposit';
+    		        idlecreeps[i].memory.action ='upgrade';
+    		        idlecreeps[i].memory.target = '5982ff2db097071b4adc2368';
     		    }
 		        //idlecreeps[i].memory.target = findBuildTarget(RoomName)[0].id;
 		        //idlecreeps[i].memory.target = "59d967ce98dc71330ce3cf6a";
