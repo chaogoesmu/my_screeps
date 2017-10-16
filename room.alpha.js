@@ -8,24 +8,52 @@ var roleTick = require('role.tick');
 var runRoom = {
 
     run: function(RoomName) {
+        //Spawn caps
         var MaxMule = 3;
         var MaxTick = 2;
-        var MaxGeneralist = 3;
-        var MaxUpgrader =2;
-        
-        
-        runTower('59e01abdf8a4427bcdaccadd');
-        
-        myRoom = Game.rooms['RoomName'];
-        //go through all the creeps and find the ones under control for this room
-		var ThisRoomsCreeps = Game.creeps;
-        //console.log('Game.spawns ' + Game.spawns['Spawn.pizza'].room);
-		ThisRoomsCreeps = _(ThisRoomsCreeps).filter({memory: {myRoom: RoomName}}).value();
+        var MaxGeneralist = 2;
+        var MaxUpgrader =1;
+    
+        //room control methods
 		var genericCount =0;
 		var idlecreeps = [];
 		var upgradey = 0;
 		var busyCreeps = [];
 		var MyCreeps = [0,0,0,0]
+        
+        runTower('59e01abdf8a4427bcdaccadd');
+        
+        //set values
+        myRoom = Game.rooms[RoomName];
+        
+        if(myRoom.memory.mySpawn == undefined)
+        {
+            
+            //TODO: works for single spawner, upgrade this to multiple later.
+            mySpawn = myRoom.find(FIND_MY_SPAWNS);
+            
+            if(Array.isArray(mySpawn))
+            {
+                console.log(mySpawn.length);
+                myRoom.memory.mySpawn = mySpawn[0].id;
+                mySpawn = mySpawn[0];
+            }
+            else
+            {
+                myRoom.memory.mySpawn = mySpawn.id;
+            }
+        }
+        else
+        {
+            mySpawn = Game.getObjectById(myRoom.memory.mySpawn);
+        }
+        
+        //console.log(myRoom);
+        //mySpawn = myRoom.find(FIND_MY_STRUCTURES, {filter (s) : { return (s.structureType == STRUCTURE_SPAWN)}});
+        //go through all the creeps and find the ones under control for this room
+		var ThisRoomsCreeps = Game.creeps;
+		ThisRoomsCreeps = _(ThisRoomsCreeps).filter({memory: {myRoom: RoomName}}).value();
+
 		//not sure why I have to use this method
 		for(var name in ThisRoomsCreeps)
 		{
@@ -80,7 +108,7 @@ var runRoom = {
 		//ok, I have a list of all idle creeps... now I need to get a list of tasks
 		if(idlecreeps.length !=0)
 		{
-		    var jobs = getJobs(RoomName);
+		    var jobs = getJobs(myRoom);
 		    var i=0;
 		    for(;i<idlecreeps.length;i++)
 		    {
@@ -104,34 +132,37 @@ var runRoom = {
 		}
 		
 		//respawn code here
-		if(MyCreeps[3] <MaxGeneralist)
+		if(!mySpawn.spawning)
 		{
-		    //TODO: have this spawn in its own room eventually... or figure something out.
-		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'generalist', myRoom:RoomName} );
-		    spawnGeneral('Spawn.pizza','generalist',RoomName,4);
-		    //function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
-		}
-		if(MyCreeps[0]<MaxTick)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 700
-		{
-			//spawn tick
-			var name = Game.spawns['Spawn.pizza'].createCreep( [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE], undefined,{role:'tick',myRoom:RoomName} );
-			console.log('Spawning: Tick '+ name + 'in room '+ RoomName );
-		}
-		if(MyCreeps[1]<MaxMule)
-		{
-			//spawn mule
-			var name = Game.spawns['Spawn.pizza'].createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY,CARRY, CARRY,MOVE,MOVE,MOVE,MOVE, MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule',myRoom:RoomName} );
-			//var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE], undefined,{role:'mule'} );
-			console.log('Spawning: Mule '+ name);
-		}
-		if(MyCreeps[2]<MaxUpgrader)
-		{
-		    spawnGeneral('Spawn.pizza', 'upgrader',RoomName,8);
-		}
-		
-		if (upgradey<2)
-		{
-		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'upgrade', MyController:'5982ff2db097071b4adc2368',myRoom:RoomName} );
+    		if(MyCreeps[3] <MaxGeneralist)
+    		{
+    		    //TODO: have this spawn in its own room eventually... or figure something out.
+    		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'generalist', myRoom:RoomName} );
+    		    spawnGeneral(mySpawn.name,'generalist',RoomName,4);
+    		    //function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
+    		}
+    		if(MyCreeps[0]<MaxTick)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 700
+    		{
+    			//spawn tick
+    			var name = mySpawn.createCreep( [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE], undefined,{role:'tick',myRoom:RoomName} );
+    			console.log('Spawning: Tick '+ name + 'in room '+ RoomName );
+    		}
+    		if(MyCreeps[1]<MaxMule)
+    		{
+    			//spawn mule
+    			var name = mySpawn.createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY,CARRY, CARRY,MOVE,MOVE,MOVE,MOVE, MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule',myRoom:RoomName} );
+    			//var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE], undefined,{role:'mule'} );
+    			console.log('Spawning: Mule '+ name + 'in room '+ RoomName );
+    		}
+    		if(MyCreeps[2]<MaxUpgrader)
+    		{
+    		    spawnGeneral(mySpawn.name, 'upgrader',RoomName,8);
+    		}
+    		
+    		if (upgradey<2)
+    		{
+    		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'upgrade', MyController:'5982ff2db097071b4adc2368',myRoom:RoomName} );
+    		}
 		}
 		
 	}
@@ -159,12 +190,20 @@ function getJobs(MyRoom)
     }
     return jobList;
 }
-
-function filterJobs()
+/*
+//purpose of this fun
+function filterJobs(jobList, busyCreeps)
 {
-    
+    var refinedJobList = jobList.slice;
+    for(var i =0;i<jobList.length;i++)
+    {
+        for(var i1=0;i1<busyCreeps.length;i1++)
+        {
+            if(joblist[i][] == busyCreeps)
+        }
+    }
 }
-
+*/
 function prioritizeJobs(jobs, busyCreeps)
 {
     var bCreeps = busyCreeps.slice();//make a copy of the possible creeps to iterate through
@@ -180,8 +219,7 @@ function prioritizeJobs(jobs, busyCreeps)
 
 function findBuildTarget(myRoom)
 {
-    roomThis = Game.rooms[myRoom];
-	var targets = Game.spawns['Spawn.pizza'].room.find(FIND_CONSTRUCTION_SITES);//TODO: FIX THIS
+	var targets = myRoom.find(FIND_CONSTRUCTION_SITES);//TODO: FIX THIS
     if(targets == undefined)
     {
 		return 0;
@@ -197,7 +235,7 @@ function findBuildTarget(myRoom)
 function findRepairTarget(myRoom)
 {
     //TODO: fix this as well, need a way to select walls and ramparts.
-    var targets = Game.spawns['Spawn.pizza'].room.find(FIND_STRUCTURES, {    
+    var targets = myRoom.find(FIND_STRUCTURES, {    
         filter: (s) => 	(s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART)&& s.hits < s.hitsMax});
     if(targets == undefined)
     {
@@ -223,9 +261,9 @@ function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
 	{
 		loop=max;
 	}
-	if(Game.spawns['Spawn.Prime'].room.energyAvailable < loop*250)
+	if(Game.spawns[spawnPoint].room.energyAvailable < loop*250)
 	{
-	    //console.log('Failed to spawn: '+typeOfSpawn + ' room has: ' +Game.spawns['Spawn.Prime'].room.energyAvailable + ' / ' +Game.spawns[spawnPoint].room.energyCapacityAvailable + ' seeking: ' + loop*250);
+	    //console.log('Failed to spawn: '+typeOfSpawn + ' room has: ' +Game.spawns[spawnPoint].room.energyAvailable + ' / ' +Game.spawns[spawnPoint].room.energyCapacityAvailable + ' seeking: ' + loop*250);
 	    return;
 	}
     while(i<loop)
