@@ -131,7 +131,7 @@ module.exports.loop = function () {
     				{
     					if(MyCreeps[1]<MaxUpgrader)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 2000
     					{
-    						spawnGeneral('Spawn.Prime', 'upgrader',8);
+    						spawnGeneral('Spawn.Prime', 'upgrader',6);
     					}
     					else
     					{

@@ -9,6 +9,7 @@ var runRoom = {
 
     run: function(RoomName) {
         //Spawn caps
+        //TODO: make this dynamic
         var MaxMule = 3;
         var MaxTick = 2;
         var MaxGeneralist = 2;
@@ -17,14 +18,26 @@ var runRoom = {
         //room control methods
 		var genericCount =0;
 		var idlecreeps = [];
-		var upgradey = 0;
 		var busyCreeps = [];
 		var MyCreeps = [0,0,0,0]
         
+        //TODO: search the room and find my towers.
         runTower('59e01abdf8a4427bcdaccadd');
+        runTower('59e46bcf6075d0438a53234d');
+        
         
         //set values
         myRoom = Game.rooms[RoomName];
+        //TODO: make the towers dynamic
+        //myTowers = myRoom.find(STRUCTURE_TOWER);
+        if(myRoom.memory.timer == undefined)
+        {
+            myRoom.memory.timer =0;
+        }
+        else
+        {
+            myRoom.memory.timer++;
+        }
         
         if(myRoom.memory.mySpawn == undefined)
         {
@@ -48,9 +61,6 @@ var runRoom = {
             mySpawn = Game.getObjectById(myRoom.memory.mySpawn);
         }
         
-        //console.log(myRoom);
-        //mySpawn = myRoom.find(FIND_MY_STRUCTURES, {filter (s) : { return (s.structureType == STRUCTURE_SPAWN)}});
-        //go through all the creeps and find the ones under control for this room
 		var ThisRoomsCreeps = Game.creeps;
 		ThisRoomsCreeps = _(ThisRoomsCreeps).filter({memory: {myRoom: RoomName}}).value();
 
@@ -93,15 +103,6 @@ var runRoom = {
         		    break;
 			//run the code and tally the things
     		}
-			
-			//this is cobbled together bs I coded just to make sure the room doesn't downgrade while I sleep
-			//TODO: FIX THIS FIRST, line 65-68
-			if(creep.memory.role == 'upgrade')
-			{
-			    //console.log('creep name: ' + creep.name);
-			    upgradey ++;
-			    roleUpgrader.run(creep);
-			}
 		}
 		//console.log('genericCount :' + genericCount +' upgrader:' +upgradey);
 		//generics should handle fixing and building
@@ -122,11 +123,10 @@ var runRoom = {
     		    }
     		    else
     		    {
+    		        //TODO: make this non room specific
     		        idlecreeps[i].memory.action ='upgrade';
     		        idlecreeps[i].memory.target = '5982ff2db097071b4adc2368';
     		    }
-		        //idlecreeps[i].memory.target = findBuildTarget(RoomName)[0].id;
-		        //idlecreeps[i].memory.target = "59d967ce98dc71330ce3cf6a";
 
 		    }
 		}
@@ -136,12 +136,9 @@ var runRoom = {
 		{
     		if(MyCreeps[3] <MaxGeneralist)
     		{
-    		    //TODO: have this spawn in its own room eventually... or figure something out.
-    		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'generalist', myRoom:RoomName} );
     		    spawnGeneral(mySpawn.name,'generalist',RoomName,4);
-    		    //function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
     		}
-    		if(MyCreeps[0]<MaxTick)// && Game.spawns['Spawn.Prime'].room.energyAvailable > 700
+    		if(MyCreeps[0]<MaxTick)// && mySpawn.room.energyAvailable > 700
     		{
     			//spawn tick
     			var name = mySpawn.createCreep( [WORK,WORK,WORK,WORK,WORK,MOVE,MOVE,MOVE], undefined,{role:'tick',myRoom:RoomName} );
@@ -157,11 +154,6 @@ var runRoom = {
     		if(MyCreeps[2]<MaxUpgrader)
     		{
     		    spawnGeneral(mySpawn.name, 'upgrader',RoomName,8);
-    		}
-    		
-    		if (upgradey<2)
-    		{
-    		    //Game.spawns['Spawn.pizza'].createCreep( [ WORK, CARRY,MOVE], undefined,{role:'upgrade', MyController:'5982ff2db097071b4adc2368',myRoom:RoomName} );
     		}
 		}
 		
@@ -261,9 +253,9 @@ function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
 	{
 		loop=max;
 	}
-	if(Game.spawns[spawnPoint].room.energyAvailable < loop*250)
+	if(Game.spawns[spawnPoint].room.energyAvailable < loop*200)
 	{
-	    //console.log('Failed to spawn: '+typeOfSpawn + ' room has: ' +Game.spawns[spawnPoint].room.energyAvailable + ' / ' +Game.spawns[spawnPoint].room.energyCapacityAvailable + ' seeking: ' + loop*250);
+	    //console.log('Failed to spawn: '+typeOfSpawn + 'in '+roomName+ ' room has: ' +Game.spawns[spawnPoint].room.energyAvailable + ' / ' +Game.spawns[spawnPoint].room.energyCapacityAvailable + ' seeking: ' + loop*250);
 	    return;
 	}
     while(i<loop)
