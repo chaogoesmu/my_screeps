@@ -3,6 +3,7 @@ var roleTick = {
     /** @param {Creep} creep **/
     run: function(creep) {
         //TODO: count how long it takes to reach container, set that to countdown of death, and spawn a new one based on this tick at that time.
+        //TODO: spawn, if theres not a container head to source then drop a container when you reach it, until its built just drop mine
         if(creep.fatigue!=0){
 			return;
 		}

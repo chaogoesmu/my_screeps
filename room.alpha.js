@@ -10,6 +10,9 @@ var runRoom = {
     run: function(RoomName) {
         //Spawn caps
         //TODO: make this dynamic
+        //set by room level?  set by energy available?  how do I want to do this?
+        //also, do I want to make this entirely dynamic?  lattice my extensions automatically?
+        //what about defenses and storages?
         var MaxMule = 3;
         var MaxTick = 2;
         var MaxGeneralist = 2;
