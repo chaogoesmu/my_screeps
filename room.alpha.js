@@ -13,22 +13,22 @@ var runRoom = {
         //set by room level?  set by energy available?  how do I want to do this?
         //also, do I want to make this entirely dynamic?  lattice my extensions automatically?
         //what about defenses and storages?
-        var MaxMule = 3;
+        var MaxMule = 2;
         var MaxTick = 2;
-        var MaxGeneralist = 2;
+        var MaxGeneralist = 3;
         var MaxUpgrader =1;
-    
+
         //room control methods
 		var genericCount =0;
 		var idlecreeps = [];
 		var busyCreeps = [];
 		var MyCreeps = [0,0,0,0]
-        
+
         //TODO: search the room and find my towers.
         runTower('59e01abdf8a4427bcdaccadd');
         runTower('59e46bcf6075d0438a53234d');
-        
-        
+
+
         //set values
         myRoom = Game.rooms[RoomName];
         //TODO: make the towers dynamic
@@ -41,13 +41,17 @@ var runRoom = {
         {
             myRoom.memory.timer++;
         }
-        
+        if(myRoom.memory.timer > 1000)
+        {
+          myRoom.memory.timer =0;
+        }
+        //console.log(myRoom.find(FIND_MY_SPAWNS));
         if(myRoom.memory.mySpawn == undefined)
         {
-            
+
             //TODO: works for single spawner, upgrade this to multiple later.
             mySpawn = myRoom.find(FIND_MY_SPAWNS);
-            
+
             if(Array.isArray(mySpawn))
             {
                 console.log(mySpawn.length);
@@ -63,7 +67,7 @@ var runRoom = {
         {
             mySpawn = Game.getObjectById(myRoom.memory.mySpawn);
         }
-        
+
 		var ThisRoomsCreeps = Game.creeps;
 		ThisRoomsCreeps = _(ThisRoomsCreeps).filter({memory: {myRoom: RoomName}}).value();
 
@@ -87,11 +91,11 @@ var runRoom = {
                 case "claimer":
                     roleClaimer.run(creep);
                     break;
-        		
+
         		case "generalist":
     			    genericCount ++;
     			    roleGeneric.run(creep);
-    			    
+
     			    if(creep.memory.action == 'idle')
     			    {
     			        idlecreeps.push(creep);
@@ -126,14 +130,14 @@ var runRoom = {
     		    }
     		    else
     		    {
-    		        //TODO: make this non room specific
+    		        //TODO: make the need change depending on room needs
     		        idlecreeps[i].memory.action ='upgrade';
-    		        idlecreeps[i].memory.target = '5982ff2db097071b4adc2368';
+    		        idlecreeps[i].memory.target = myRoom.controller.id;
     		    }
 
 		    }
 		}
-		
+
 		//respawn code here
 		if(!mySpawn.spawning)
 		{
@@ -150,7 +154,8 @@ var runRoom = {
     		if(MyCreeps[1]<MaxMule)
     		{
     			//spawn mule
-    			var name = mySpawn.createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY,CARRY, CARRY,MOVE,MOVE,MOVE,MOVE, MOVE,MOVE,MOVE,MOVE], undefined,{role:'mule',myRoom:RoomName} );
+    			var name = mySpawn.createCreep( [CARRY, CARRY,CARRY, CARRY,CARRY,CARRY, CARRY,CARRY, CARRY,CARRY, MOVE,MOVE,MOVE,MOVE,MOVE,MOVE, MOVE,MOVE,MOVE,MOVE
+    			], undefined,{role:'mule',myRoom:RoomName} );
     			//var name = Game.spawns['Spawn.Prime'].createCreep( [CARRY, CARRY,MOVE,MOVE,CARRY, CARRY,MOVE,MOVE], undefined,{role:'mule'} );
     			console.log('Spawning: Mule '+ name + 'in room '+ RoomName );
     		}
@@ -159,7 +164,7 @@ var runRoom = {
     		    spawnGeneral(mySpawn.name, 'upgrader',RoomName,8);
     		}
 		}
-		
+
 	}
 }
 
@@ -207,7 +212,7 @@ function prioritizeJobs(jobs, busyCreeps)
     {
         for(var i1 = 0; i1<bCreeps.length;i1++)
         {
-            
+
         }
     }
 }
@@ -230,7 +235,7 @@ function findBuildTarget(myRoom)
 function findRepairTarget(myRoom)
 {
     //TODO: fix this as well, need a way to select walls and ramparts.
-    var targets = myRoom.find(FIND_STRUCTURES, {    
+    var targets = myRoom.find(FIND_STRUCTURES, {
         filter: (s) => 	(s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART)&& s.hits < s.hitsMax});
     if(targets == undefined)
     {
@@ -248,7 +253,7 @@ function findRepairTarget(myRoom)
 function spawnGeneral(spawnPoint, typeOfSpawn, roomName, max = 13)
 {
     var top = Game.spawns[spawnPoint].room.energyCapacityAvailable;
-    
+
     var loop = Math.floor(top/200);
     var i=0;
     var body = [];
@@ -284,7 +289,7 @@ function runTower(towerID)
 		}
 		else
 		{
-			
+
 			var rampRepair = tower.room.find(FIND_STRUCTURES, {filter: s=> s.structureType == STRUCTURE_RAMPART || s.structureType == STRUCTURE_WALL});
 			for (let ramps of rampRepair)
 			{
@@ -298,7 +303,7 @@ function runTower(towerID)
 			{
 				tower.heal(creepToRepair);
 			}
-			
+
 		}
 	}
 }
@@ -306,9 +311,9 @@ function runTower(towerID)
 /*
 function findTarget(myRoom)
 {
-    var repairTarget = myRoom.find(FIND_STRUCTURES, {    
+    var repairTarget = myRoom.find(FIND_STRUCTURES, {
         filter: (s) => 	(s.structureType != STRUCTURE_WALL && s.structureType != STRUCTURE_RAMPART)&& s.hits < s.hitsMax});
-        
+
     if(repairTarget!= undefined)
     {
         //console.log(repairTarget);

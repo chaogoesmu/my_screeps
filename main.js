@@ -12,9 +12,9 @@ var roomControl = require('room.alpha');
 module.exports.loop = function () {
     var MaxHarvest = 0;
     var MaxBuilder = 1;
-    var MaxUpgrader = 1;
+    var MaxUpgrader = 2;
     var MaxFixer =1;
-    var MaxMule = 3;
+    var MaxMule = 2;
     var MaxTick = 2;
     var MaxForager =0;
     var MaxLDMule = 0;
@@ -33,9 +33,12 @@ module.exports.loop = function () {
     }
     
     
+        runTower('59c87ac66e8ccf1376611345');
+        runTower('59f4decc473d6f1899b656f6');
         runTower('59b47e88e1065233e38d42ee');
         runTower('59b820293740587d2ce95b44');
-        runTower('59c87ac66e8ccf1376611345');
+        runTower('59f4e8355221ba30b82f81a4');
+        runTower('59f4f086db2fbe0220035a9f');
         
         
         

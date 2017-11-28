@@ -30,8 +30,8 @@ var roleGeneric = {
 				}
                 break;
             case 'resupply':
-                amifull(creep);
                 actResupply.run(creep);
+                amifull(creep);
                 break;
             case 'build' :
                 if (target==undefined)
